@@ -12,6 +12,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const schema = yup.object().shape({
   email: yup
@@ -25,6 +27,9 @@ const schema = yup.object().shape({
 });
 
 const LogIn = () => {
+  const host= process.env.SERVER_URL;
+
+  const navigate=useNavigate();
   const {
     handleSubmit,
     control,
@@ -33,8 +38,20 @@ const LogIn = () => {
     resolver: yupResolver(schema),
   });
   const isNonMobileScreens = useMediaQuery("(min-width: 800px)");
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async(data) => {
+    try {
+      const response = await axios.post(`${host}/users/login`, data);
+
+      if (response.status === 200) {
+        navigate('/'); // Redirect to home page
+      } else {
+        // Handle unexpected status codes
+        alert('Login failed');
+      }
+    } catch (error) {
+      // Handle errors
+      alert('An error occurred: ' + error.message);
+    }
   };
 
   return (

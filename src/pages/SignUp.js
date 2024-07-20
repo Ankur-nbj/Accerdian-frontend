@@ -1,7 +1,5 @@
-import React from "react";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import React, { useState } from "react";
+import axios from 'axios';
 import {
   TextField,
   Button,
@@ -14,31 +12,52 @@ import {
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-const schema = yup.object().shape({
-  name: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
-
 const SignUp = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 800px)");
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+  const host= process.env.SERVER_URL;
+  
+  // State variables for form fields
+  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const handleNameChange = (event) => setName(event.target.value);
+  const handleLastNameChange = (event) => setLastName(event.target.value);
+  const handleEmailChange = (event) => setEmail(event.target.value);
+  const handlePasswordChange = (event) => setPassword(event.target.value);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevent default form submission
+
+    const data = {
+      name,
+      lastName,
+      email,
+      password
+    };
+
+    try {
+      const response = await axios.post(`${host}/users/register`, data);
+    
+      if (response.status === 201 ) {
+        // Handle successful response here
+        alert('User registered successfully');
+
+         // Clear form fields
+        setName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+
+      } else {
+        // Handle unexpected status codes here
+        alert('Could not sign up');
+      }
+    } catch (error) {
+      // Handle error here
+      alert('An error occurred: ' + error.message);
+    }
   };
 
   return (
@@ -68,83 +87,54 @@ const SignUp = () => {
           <Typography sx={{ fontSize: "2rem", fontWeight: "bold" }}>
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
-            <Controller
-              name="firstName"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoComplete="given-name"
-                  autoFocus
-                  error={!!errors.firstName}
-                  helperText={errors.firstName ? errors.firstName.message : ""}
-                />
-              )}
+          <Box component="form" noValidate onSubmit={handleSubmit}>
+            <TextField
+              variant="standard"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="First Name"
+              autoComplete="given-name"
+              autoFocus
+              value={name}
+              onChange={handleNameChange}
             />
-            <Controller
-              name="lastName"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  autoComplete="family-name"
-                  error={!!errors.lastName}
-                  helperText={errors.lastName ? errors.lastName.message : ""}
-                />
-              )}
+            <TextField
+              variant="standard"
+              margin="normal"
+              required
+              fullWidth
+              id="lastName"
+              label="Last Name"
+              autoComplete="family-name"
+              value={lastName}
+              onChange={handleLastNameChange}
             />
-            <Controller
-              name="email"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  variant="standard"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  type="email"
-                  autoComplete="email"
-                  error={!!errors.email}
-                  helperText={errors.email ? errors.email.message : ""}
-                  sx={{ maxWidth: "400px", width: "100%" }}
-                />
-              )}
+            <TextField
+              variant="standard"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={handleEmailChange}
+              sx={{ maxWidth: "400px", width: "100%" }}
             />
-            <Controller
-              name="password"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  id="password"
-                  variant="standard"
-                  margin="normal"
-                  fullWidth
-                  label="Password*"
-                  type="password"
-                  autoComplete="current-password"
-                  error={!!errors.password}
-                  helperText={errors.password ? errors.password.message : ""}
-                  sx={{ maxWidth: "400px", width: "100%" }}
-                />
-              )}
+            <TextField
+              id="password"
+              variant="standard"
+              margin="normal"
+              fullWidth
+              label="Password*"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={handlePasswordChange}
+              sx={{ maxWidth: "400px", width: "100%" }}
             />
             <Box
               sx={{
@@ -177,7 +167,7 @@ const SignUp = () => {
         </Box>
         {isNonMobileScreens ? (
           <Box sx={{ width: "50%", margin: "auto 0" }}>
-            <img src="./images/signup.png" alt="signup" />{" "}
+            <img src="./images/signup.png" alt="signup" />
           </Box>
         ) : (
           ""

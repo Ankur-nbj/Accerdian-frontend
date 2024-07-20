@@ -15,6 +15,7 @@ const ModalContent = styled(Box)({
 });
 
 const ReferralFormModal = ({ open, handleClose }) => {
+  const host= process.env.SERVER_URL;
   const [form, setForm] = useState({
     referrer_name: '',
     referrer_email: '',
@@ -32,12 +33,14 @@ const ReferralFormModal = ({ open, handleClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://your-backend-url.com/api/referrals', {
+      const response = await fetch(`${host}/refers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
+      console.log(response);
+      
       if (response.ok) {
         setSnackbarMessage('Referral submitted successfully!');
         setSnackbarOpen(true);
@@ -57,6 +60,7 @@ const ReferralFormModal = ({ open, handleClose }) => {
       setSnackbarOpen(true);
     }
   };
+
 
   return (
     <>

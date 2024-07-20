@@ -47,7 +47,7 @@ const Home = () => {
           borderRadius: "500px",
           p: "0 2rem",
           width: "45%",
-          margin: "2rem auto",
+          margin: "2rem auto 1rem auto",
         }}
       >
         <Tabs
