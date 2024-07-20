@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 import { Modal, Box, Typography, TextField, Button, Snackbar, Alert } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import  styled  from '@emotion/styled';
 
-const useStyles = makeStyles({
-  modalContent: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    backgroundColor: 'white',
-    padding: '16px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  },
+const ModalContent = styled(Box)({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  backgroundColor: 'white',
+  padding: '16px',
+  borderRadius: '8px',
+  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
 });
 
 const ReferralFormModal = ({ open, handleClose }) => {
-  const classes = useStyles();
   const [form, setForm] = useState({
     referrer_name: '',
     referrer_email: '',
@@ -64,8 +61,8 @@ const ReferralFormModal = ({ open, handleClose }) => {
   return (
     <>
       <Modal open={open} onClose={handleClose}>
-        <Box className={classes.modalContent}>
-          <Typography  gutterBottom sx={{fontSize:"2rem", fontWeight:"bold"}}>
+        <ModalContent>
+          <Typography gutterBottom sx={{ fontSize: "2rem", fontWeight: "bold" }}>
             Referral Form
           </Typography>
           <form onSubmit={handleSubmit}>
@@ -118,7 +115,7 @@ const ReferralFormModal = ({ open, handleClose }) => {
               Submit
             </Button>
           </form>
-        </Box>
+        </ModalContent>
       </Modal>
       <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
         <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarMessage.includes('success') ? 'success' : 'error'}>
